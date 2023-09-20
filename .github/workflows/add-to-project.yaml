@@ -1,0 +1,40 @@
+name: Issue Management
+
+on:
+  workflow_call:
+    inputs:
+      project_id:
+        type: number
+        required: true
+    secrets:
+      PROJECT_MANAGEMENT_TOKEN:
+        required: true
+
+env:
+  TRIAGE_LABEL: status/triage
+
+jobs:
+  manage_incoming_issues:
+    name: Manage incoming issues
+    if: ${{ github.event.action == 'opened' || github.event.action == 'reopened' }}
+    runs-on: ubuntu-latest
+    concurrency: issue_labels-${{ github.event.issue.number }}
+    permissions:
+      issues: write
+    steps:
+      - uses: actions/create-github-app-token@v1.2.1
+        id: app-token
+        with:
+          app_id: ${{ vars.APP_ID }}
+          private_key: ${{ secrets.APP_PRIVATE_KEY }}
+      - run: |
+          # make sure that label exists
+          # gh label --repo ${{ github.event.repository.full_name }} create -f ${{ env.TRIAGE_LABEL }} -c 000000 -d "Issue needs triage"
+          # # add label to issue
+          # gh issue --repo ${{ github.event.repository.full_name }} edit ${{ github.event.issue.html_url }} --add-label ${{ env.TRIAGE_LABEL }}
+          echo ${{ github.event.issue }}
+          # add issue to the project
+          gh project item-add ${{ inputs.project_id }} --owner ${{ github.event.org .login }} --url ${{ github.event.issue.html_url }}
+        env:
+          # token needs to have read/write permision for projects on org level and issues on repo level
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}

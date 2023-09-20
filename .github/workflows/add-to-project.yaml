@@ -6,9 +6,6 @@ on:
       project_id:
         type: number
         required: true
-    secrets:
-      PROJECT_MANAGEMENT_TOKEN:
-        required: true
 
 env:
   TRIAGE_LABEL: status/triage

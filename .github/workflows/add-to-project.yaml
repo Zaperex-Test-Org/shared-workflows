@@ -13,7 +13,6 @@ env:
 jobs:
   manage_incoming_issues:
     name: Manage incoming issues
-    if: ${{ github.event.action == 'opened' || github.event.action == 'reopened' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/create-github-app-token@v1.2.1

@@ -15,9 +15,6 @@ jobs:
     name: Manage incoming issues
     if: ${{ github.event.action == 'opened' || github.event.action == 'reopened' }}
     runs-on: ubuntu-latest
-    concurrency: issue_labels-${{ github.event.issue.number }}
-    permissions:
-      issues: write
     steps:
       - uses: actions/create-github-app-token@v1.2.1
         id: app-token

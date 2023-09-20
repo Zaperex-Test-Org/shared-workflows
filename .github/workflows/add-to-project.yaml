@@ -6,6 +6,9 @@ on:
       project_id:
         type: number
         required: true
+    secrets:
+      project-token:
+        required: true
 
 env:
   TRIAGE_LABEL: status/triage
@@ -30,4 +33,4 @@ jobs:
           gh project item-add ${{ inputs.project_id }} --owner ${{ github.event.org .login }} --url ${{ github.event.issue.html_url }}
         env:
           # token needs to have read/write permision for projects on org level and issues on repo level
-          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          GH_TOKEN: ${{ secrets.project-token }}

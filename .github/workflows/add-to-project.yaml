@@ -6,9 +6,6 @@ on:
       project_id:
         type: number
         required: true
-    secrets:
-      project-token:
-        required: true
 
 env:
   TRIAGE_LABEL: status/triage
@@ -18,11 +15,13 @@ jobs:
     name: Manage incoming issues
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/create-github-app-token@v1.2.1
-        id: app-token
+      - name: Generate token
+        id: generate-token
+        uses: tibdex/github-app-token@v2.1.0
         with:
           app_id: ${{ vars.APP_ID }}
           private_key: ${{ secrets.APP_PRIVATE_KEY }}
+          revoke: true
       - run: |
           # make sure that label exists
           # gh label --repo ${{ github.event.repository.full_name }} create -f ${{ env.TRIAGE_LABEL }} -c 000000 -d "Issue needs triage"
@@ -33,4 +32,4 @@ jobs:
           gh project item-add ${{ inputs.project_id }} --owner ${{ github.event.org .login }} --url ${{ github.event.issue.html_url }}
         env:
           # token needs to have read/write permision for projects on org level and issues on repo level
-          GH_TOKEN: ${{ secrets.project-token }}
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}

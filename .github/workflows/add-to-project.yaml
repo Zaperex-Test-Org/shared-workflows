@@ -1,15 +1,16 @@
 name: Issue Management
 
-on: workflow_call
-
-env:
-  PROJECT_ID: 1
-  TRIAGE_LABEL: "status/triage"
+on:
+  workflow_call:
+    inputs:
+      project_id:
+        type: number
+        required: true
 jobs:
   add-issue-to-project:
     name: Manage incoming issues
     runs-on: ubuntu-latest
-    if: ${{ github.event.label.name }} == ${{ env.TRIAGE_LABEL }}
+    if: ${{ github.event.label.name == 'status/triage' }}
     steps:
       - name: Generate token
         id: generate-token
@@ -18,7 +19,7 @@ jobs:
           app_id: ${{ vars.APP_ID }}
           private_key: ${{ secrets.APP_PRIVATE_KEY }}
       - name: Add issue to project
-        run: gh project item-add ${{ env.PROJECT_ID }} --owner ${{ github.event.organization.login }} --url ${{ github.event.issue.html_url }}
+        run: gh project item-add ${{ inputs.project_id }} --owner ${{ github.event.organization.login }} --url ${{ github.event.issue.html_url }}
         env:
           # token needs to have read/write permissions for projects on org level
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}

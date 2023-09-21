@@ -7,11 +7,8 @@ on:
         type: number
         required: true
 
-env:
-  TRIAGE_LABEL: status/triage
-
 jobs:
-  manage_incoming_issues:
+  add-issue-to-project:
     name: Manage incoming issues
     runs-on: ubuntu-latest
     steps:

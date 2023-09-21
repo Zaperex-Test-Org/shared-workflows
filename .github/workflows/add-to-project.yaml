@@ -4,11 +4,12 @@ on: workflow_call
 
 env:
   PROJECT_ID: 1
+  TRIAGE_LABEL: "status/triage"
 jobs:
   add-issue-to-project:
     name: Manage incoming issues
     runs-on: ubuntu-latest
-    if: ${{ github.event.label.name }} == "status/triage"
+    if: ${{ github.event.label.name }} == ${{ env.TRIAGE_LABEL }}
     steps:
       - name: Generate token
         id: generate-token
